@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	<!-- 设置的拦截器包 -->
+	<package name="total" extends="struts-default">
+		<interceptors> <!-- 配置拦截器名 -->
+			<interceptor name="login" class="org.wl.util.LoginIterceptor"></interceptor>
+			<interceptor name="onlyadmin" class="org.wl.util.OnlyAdminInterceptor"></interceptor>
+			<interceptor name="onlyuser" class="org.wl.util.OnlyUserInterceptor"></interceptor>
+			<interceptor name="fileUpload" class="org.wl.util.FileUploadIterceptor"></interceptor>
+			<!-- 将自己的拦截器加入到拦截器栈中 -->
+			<interceptor-stack name="loginStack">
+				<interceptor-ref name="login"></interceptor-ref>
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+			</interceptor-stack>
+			<interceptor-stack name="onlyadminStack">
+				<interceptor-ref name="login"></interceptor-ref>
+				<interceptor-ref name="onlyadmin"></interceptor-ref>
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+			</interceptor-stack>
+			<interceptor-stack name="onlyuserStack">
+				<interceptor-ref name="login"></interceptor-ref>
+				<interceptor-ref name="onlyuser"></interceptor-ref> 
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+			</interceptor-stack>
+			<interceptor-stack name="fileUploadStack">
+				<interceptor-ref name="fileUpload"></interceptor-ref>
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		<!-- 为当前包中的所有action配置默认拦截器栈 -->		
+	</package>
+	<!-- 管理员的功能 -->
+	<package name="admin" extends="total">
+		<global-results>
+   			<result name="error">error.jsp</result>
+   		</global-results>
+   		<action name="newstype_*" class="org.wl.action.NewsTypeAction" method="{1}">
+			<result name="add" type="chain">newstype_findAll</result>
+			<result name="findAll">admin/newstype_findAll.jsp</result>
+		    <result name="toupdate">admin/newstype_update.jsp</result>
+			<result name="update" type="chain">newstype_findAll</result>
+			<result name="todelete" type="chain">newstype_delete</result>
+			<result name="delete" type="chain">newstype_findAll</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyadminStack" />
+		</action>
+		<action name="rongzitype_*" class="org.wl.action.RongziTypeAction" method="{1}">
+			<result name="add" type="chain">rongzitype_findAll</result>
+			<result name="findAll">admin/rongzitype_findAll.jsp</result>
+		    <result name="toupdate">admin/rongzitype_update.jsp</result>
+			<result name="update" type="chain">rongzitype_findAll</result>
+			<result name="todelete" type="chain">rongzitype_delete</result>
+			<result name="delete" type="chain">rongzitype_findAll</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyadminStack" />
+		</action>
+		<action name="rongzistate_*" class="org.wl.action.RongziStateAction" method="{1}">
+			<result name="add" type="chain">rongzistate_findAll</result>
+			<result name="findAll">admin/rongzistate_findAll.jsp</result>
+		    <result name="toupdate">admin/rongzistate_update.jsp</result>
+			<result name="update" type="chain">rongzistate_findAll</result>
+			<result name="todelete" type="chain">rongzistate_delete</result>
+			<result name="delete" type="chain">rongzistate_findAll</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyadminStack" />
+		</action>
+		<action name="users_findAll" class="org.wl.action.UsersAction" method="findAll">
+			<result name="findAll">admin/users_findAll.jsp</result>
+		</action>
+		<action name="users_test" class="org.wl.action.UsersAction" method="test">
+			<result name="test">admin/users_findAll.jsp</result>
+		</action>
+		<action name="logins_*" class="org.wl.action.LoginsAction" method="{1}">
+			<result name="enableBatch" type="chain">users_findAll</result>
+			<result name="disEnableBatch" type="chain">users_findAll</result>
+			<result name="findById">admin/users_specify.jsp</result>
+			<result name="ko">ko.jsp</result>
+		</action>
+		<!-- 管理员 融资项目 的功能 -->
+		
+		<action name="rongzipoj_jubao" class="org.wl.action.RongziPojAction" method="jubao">
+			<result name="jubao">admin/rongzi_poj.jsp</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyadminStack" />
+		</action>
+		<action name="rongzipoj_tong" class="org.wl.action.RongziPojAction" method="tong">
+			<result name="tong" type="chain">rongzipoj_adminfindall</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyadminStack" />
+		</action>
+		<action name="rongzipoj_jujue" class="org.wl.action.RongziPojAction" method="jujue">
+			<result name="jujue" type="chain">rongzipoj_adminfindall</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyadminStack" />
+		</action>
+		<action name="qxjubao" class="org.wl.action.RongziPojAction" method="qxjubao">
+			<result name="qxjubao" type="chain">rongzipoj_jubao</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyadminStack" />
+		</action>
+		<action name="rongzipoj_adminfindall" class="org.wl.action.RongziPojAction" method="adminfindall">
+			<result name="adminfindall">admin/rongzi_poj.jsp</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyadminStack" />
+		</action>
+		<action name="rongzipoj_test0" class="org.wl.action.RongziPojAction" method="test0">
+			<result name="test0">admin/rongzi_poj.jsp</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyadminStack" />
+		</action>
+		<action name="rongzipoj_delete" class="org.wl.action.RongziPojAction" method="delete">
+			<result name="delete" type="chain">rongzipoj_adminfindall</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+		
+		
+		
+		
+		<action name="touzitype_*" class="org.g.action.TouziTypeAction" method="{1}">
+			<result name="add" type="chain">touzitype_findAll</result>
+			<result name="findAll">admin/touzitype_findAll.jsp</result>
+		    <result name="toupdate">admin/touzitype_update.jsp</result>
+			<result name="update" type="chain">touzitype_findAll</result>
+			<result name="todelete" type="chain">touzitype_delete</result>
+			<result name="delete" type="chain">touzitype_findAll</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyadminStack" />
+		</action>
+		<action name="touzistate_*" class="org.g.action.TouziStateAction" method="{1}">
+			<result name="add" type="chain">touzistate_findAll</result>
+			<result name="findAll">admin/touzistate_findAll.jsp</result>
+		    <result name="toupdate">admin/touzistate_update.jsp</result>
+			<result name="update" type="chain">touzistate_findAll</result>
+			<result name="todelete" type="chain">touzistate_delete</result>
+			<result name="delete" type="chain">touzistate_findAll</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyadminStack" />
+		</action>
+		
+		<!-- 管理员 融资项目 的功能 -->
+		
+		<action name="touzipoj_jubao" class="org.g.action.TouziPojAction" method="jubao">
+			<result name="jubao">admin/touzi_poj.jsp</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyadminStack" />
+		</action>
+		<action name="touzipoj_tong" class="org.g.action.TouziPojAction" method="tong">
+			<result name="tong" type="chain">touzipoj_adminfindall</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyadminStack" />
+		</action>
+		<action name="touzipoj_jujue" class="org.g.action.TouziPojAction" method="jujue">
+			<result name="jujue" type="chain">touzipoj_adminfindall</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyadminStack" />
+		</action>
+		<action name="qxjubao" class="org.g.action.TouziPojAction" method="qxjubao">
+			<result name="qxjubao" type="chain">touzipoj_jubao</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyadminStack" />
+		</action>
+		<action name="touzipoj_adminfindall" class="org.g.action.TouziPojAction" method="adminfindall">
+			<result name="adminfindall">admin/touzi_poj.jsp</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyadminStack" />
+		</action>
+		<action name="touzipoj_test0" class="org.g.action.TouziPojAction" method="test0">
+			<result name="test0">admin/touzi_poj.jsp</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyadminStack" />
+		</action>
+		<action name="touzipoj_delete" class="org.g.action.TouziPojAction" method="delete">
+			<result name="delete" type="chain">touzipoj_adminfindall</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+	</package>
+	<!-- 用户的功能 -->
+	<package name="user" extends="total">
+		<global-results>
+   			<result name="input">fail.jsp</result>
+   			<result name="error">logins.jsp</result>
+   		</global-results>
+		<!-- users 的信息修改 -->
+		<action name="logins_topwd" class="org.wl.action.LoginsAction" method="topwd">
+			<result name="topwd">user/up_pwd.jsp</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyuserStack" />
+	
+		</action>
+		<action name="logins_pwd" class="org.wl.action.LoginsAction" method="pwd">
+			<result name="pwd">logins.jsp</result>
+			<result name="input">user/up_pwd.jsp</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyuserStack" />
+		</action>
+		<action name="users_*" class="org.wl.action.UsersAction" method="{1}">
+			<result name="toup">user/up_users.jsp</result>
+			<result name="look">user/info_users.jsp</result>
+			<interceptor-ref name="onlyuserStack" />
+	
+		</action>
+		<action name="create" class="org.wl.action.RongziPojAction" method="create">
+			<result name="create">user/create_poject.jsp</result>
+		</action>
+		<action name="email_look" class="org.wl.action.UsersEmailAction" method="look">
+			<result name="look">user/users_email.jsp</result>
+			<result name="fail">fail</result>
+			<interceptor-ref name="onlyuserStack" />
+		</action>
+		<action name="email_findById" class="org.wl.action.UsersEmailAction" method="findById">
+			<result name="findById">user/info_email.jsp</result>
+			<result name="fail">fail</result>
+			<interceptor-ref name="onlyuserStack" />
+		</action>
+		<action name="email_delete" class="org.wl.action.UsersEmailAction" method="delete">
+			<result name="delete" type="chain">email_look</result>
+			<result name="fail">fail</result>
+			<interceptor-ref name="onlyuserStack" />
+		</action>
+		<action name="users_update" class="org.wl.action.UsersAction" method="update">
+			
+			<result name="update">user/info_users.jsp</result>
+			<result name="input">user/up_users.jsp</result>
+	
+			<interceptor-ref name="onlyuserStack" />
+		</action>
+		<action name="rongzipoj_save" class="org.wl.action.RongziPojAction" method="save">
+			<result name="save" type="chain">rongzipoj_findAllByTitle</result>
+			<result name="input">user/create_poject.jsp</result>
+			<interceptor-ref name="onlyuserStack" />
+		</action>
+		<action name="rongzipoj_*" class="org.wl.action.RongziPojAction" method="{1}">
+			<result name="findAllByTitle">user/rz_poject.jsp</result>
+			<result name="test">user/rz_poject.jsp</result>
+			<result name="toupdate">user/up_poject.jsp</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyuserStack" />
+		</action>
+		<action name="rongzipoj_update" class="org.wl.action.RongziPojAction" method="update">
+			<result name="update" type="chain">rongzipoj_findAllByTitle</result>
+			<result name="input">user/up_poject.jsp</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+		<action name="rongzipoj_look" class="org.wl.action.RongziPojAction" method="look">
+			<result name="look">user/info_poject.jsp</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyuserStack" />
+		</action>
+		<action name="rongzipoj_zancun" class="org.wl.action.RongziPojAction" method="zancun">
+			<result name="zancun" type="chain">rongzipoj_findAllByTitle</result>
+			<result name="input">user/create_poject.jsp</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyuserStack" />
+		</action>
+		<action name="rongzipoj_upzancun" class="org.wl.action.RongziPojAction" method="upzancun">
+			<result name="upzancun" type="chain">rongzipoj_findAllByTitle</result>
+			<result name="input">user/up_poject.jsp</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyuserStack" />
+		</action>
+		<action name="rongzipoj_udelete" class="org.wl.action.RongziPojAction" method="delete">
+			<result name="delete" type="chain">rongzipoj_findAllByTitle</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyuserStack" />
+		</action>
+		<action name="rongzipoj_money" class="org.wl.action.RongziPojAction" method="money">
+			<result name="money">user/money_poject.jsp</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyuserStack" />
+		</action>
+		<action name="up_nowmoney" class="org.wl.action.RongziPojAction" method="nowmoney">
+			<result name="nowmoney">user/money_poject.jsp</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyuserStack" />
+		</action>
+		<action name="cypoj_findAll" class="org.wl.action.CyPojAction" method="findAll">
+			<result name="findAll">user/cy_poject.jsp</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyuserStack" />
+		</action>
+		<action name="cypoj_look" class="org.wl.action.CyPojAction" method="look">
+			<result name="look">user/info_cypoj.jsp</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyuserStack" />
+		</action>
+		<action name="cypoj_testt" class="org.wl.action.CyPojAction" method="testt">
+			<result name="testt">user/cy_poject.jsp</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyuserStack" />
+		</action>
+		<action name="news_findAllByTitle" class="org.wl.action.NewsPojAction" method="findAllByTitle">
+			<result name="findAllByTitle">user/news_findAll.jsp</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+		<action name="news_test" class="org.wl.action.NewsPojAction" method="test">
+			<result name="test">user/news_findAll.jsp</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+		<action name="news_add" class="org.wl.action.NewsPojAction" method="add">
+			<result name="add" type="chain">news_findAllByTitle</result>
+			<result name="input">user/news_create.jsp</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+		<action name="tiao" class="org.wl.action.NewsPojAction" method="tiao">
+			<result name="tiao">user/news_create.jsp</result>
+		</action>
+		<action name="news_delete" class="org.wl.action.NewsPojAction" method="delete">
+			<result name="delete" type="chain">news_findAllByTitle</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+		<action name="news_look" class="org.wl.action.NewsPojAction" method="look">
+			<result name="look">user/info_news.jsp</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+		<action name="news_llook" class="org.wl.action.NewsPojAction" method="llook">
+			<result name="llook">user/info_ynews.jsp</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+		<action name="news_jubao" class="org.wl.action.NewsPojAction" method="jubao">
+			<result name="jubao">user/jubao_news.jsp</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+		<action name="news_test1" class="org.wl.action.NewsPojAction" method="test1">
+			<result name="test1">user/jubao_news.jsp</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+		
+		
+		<action name="tcreate" class="org.g.action.TouziPojAction" method="tcreate">
+			<result name="tcreate">user/create_tpoject.jsp</result>
+		</action>
+		<action name="touzipoj_save" class="org.g.action.TouziPojAction" method="save">
+			<result name="save" type="chain">touzipoj_findAllByTitle</result>
+			<result name="input">user/create_tpoject.jsp</result>
+			<interceptor-ref name="onlyuserStack" />
+		</action>
+		<action name="touzipoj_*" class="org.g.action.TouziPojAction" method="{1}">			
+			<result name="findAllByTitle">user/tz_poject.jsp</result>
+			<result name="test">user/tz_poject.jsp</result>
+			<result name="toupdate">user/up_tpoject.jsp</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyuserStack" />
+		</action>
+		
+		<action name="touzipoj_update" class="org.g.action.TouziPojAction" method="update">
+			<result name="update" type="chain">touzipoj_findAllByTitle</result>
+			<result name="input">user/up_tpoject.jsp</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+		
+		<action name="touzipoj_look" class="org.g.action.TouziPojAction" method="look">
+			<result name="look">user/info_tpoject.jsp</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyuserStack" />
+		</action>
+		
+		<action name="touzipoj_zancun" class="org.g.action.TouziPojAction" method="zancun">
+			<result name="zancun" type="chain">touzipoj_findAllByTitle</result>
+			<result name="input">user/create_tpoject.jsp</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyuserStack" />
+		</action>
+		<action name="touzipoj_upzancun" class="org.g.action.TouziPojAction" method="upzancun">
+			<result name="upzancun" type="chain">touzipoj_findAllByTitle</result>
+			<result name="input">user/up_tpoject.jsp</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyuserStack" />
+		</action>
+		
+		<action name="touzipoj_udelete" class="org.g.action.TouziPojAction" method="delete">
+			<result name="delete" type="chain">touzipoj_findAllByTitle</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyuserStack" />
+		</action>
+		<action name="touzipoj_money" class="org.g.action.TouziPojAction" method="money">
+			<result name="money">user/money_tpoject.jsp</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyuserStack" />
+		</action>
+		<action name="up_Tnowmoney" class="org.g.action.TouziPojAction" method="nowmoney">
+			<result name="nowmoney">user/money_tpoject.jsp</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyuserStack" />
+		</action>
+		
+		
+		<action name="cytpoj_findAll" class="org.g.action.CyTPojAction" method="findAll">
+			<result name="findAll">user/cy_tpoject.jsp</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyuserStack" />
+		</action>
+		<action name="cytpoj_look" class="org.g.action.CyTPojAction" method="look">
+			<result name="look">user/info_cytpoj.jsp</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyuserStack" />
+		</action>
+		<action name="cytpoj_testt" class="org.g.action.CyTPojAction" method="testt">
+			<result name="testt">user/cy_tpoject.jsp</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyuserStack" />
+		</action>		
+		<action name="cytpoj_look" class="org.g.action.CyTPojAction" method="look">
+			<result name="look">user/info_cytpoj.jsp</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyuserStack" />
+		</action>
+		<action name="cytpoj_testt" class="org.g.action.CyTPojAction" method="testt">
+			<result name="testt">user/cy_tpoject.jsp</result>
+			<result name="fail">fail.jsp</result>
+			<interceptor-ref name="onlyuserStack" />
+		</action>
+	</package>
+	<package name="MyPackage" extends="struts-default">
+		<!--  注册操作 --> 
+		<action name="logins_reg" class="org.wl.action.LoginsAction" method="reg">
+			<result name="login">logins.jsp</result>
+			<result name="input">regist.jsp</result>
+		</action>
+		<!-- 登录验证 -->
+		<action name="logins_login" class="org.wl.action.LoginsAction" method="login">
+			<result name="login">logins.jsp</result>
+			<result name="users">user/user_index.jsp</result>
+			<result name="admin">admin/admin_index.jsp</result>
+		</action>
+		<action name="tuichu" class="org.wl.action.LoginsAction" method="tuichu">
+			<result name="tuichu">logins.jsp</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+		<!-- cypoj users -->
+		<action name="cypoj_users" class="org.wl.action.CyPojAction" method="users">
+			<result name="users">/user/info_poject.jsp</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+		<action name="cypoj_uusers" class="org.wl.action.CyPojAction" method="users">
+			<result name="users">info_poject.jsp</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+		<!-- 游客功能  -->
+		<!-- 查看已审核通过的项目  -->
+		<action name="forget" class="org.wl.action.LoginsAction" method="forget">
+			<result name="forget">logins.jsp</result>
+			<result name="input">forget.jsp</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+		<action name="y_findAllPoj" class="org.wl.action.RongziPojAction" method="findAllPoj">
+			<result name="findAllPoj">yk.jsp</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+		<action name="y_lookqb" class="org.wl.action.RongziPojAction" method="lookqb">
+			<result name="lookqb">yk.jsp</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+		<action name="yfindByTitle" class="org.wl.action.RongziPojAction" method="yfindByTitle">
+			<result name="yfindByTitle">findAllPoj.jsp</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+		<action name="y_yfindByTitle" class="org.wl.action.RongziPojAction" method="yfindByTitle">
+			<result name="yfindByTitle">yk.jsp</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+		<action name="rongzipoj_test1" class="org.wl.action.RongziPojAction" method="test1">
+			<result name="test1">yk.jsp</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+		<action name="y_yjubao" class="org.wl.action.RongziPojAction" method="yjubao">
+			<result name="yjubao" type="chain">y_yfindByTitle</result>
+			<result name="fail">fail.jsp</result>
+		</action>		
+		<action name="cytpoj_users" class="org.g.action.CyTPojAction" method="users">
+			<result name="users">/user/info_tpoject.jsp</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+		<action name="cytpoj_uusers" class="org.g.action.CyTPojAction" method="users">
+		
+			<result name="users">info_tpoject.jsp</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+		<action name="yt_findAllPoj" class="org.g.action.TouziPojAction" method="findAllPoj">
+			<result name="findAllPoj">ykt.jsp</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+		<action name="yt_lookqb" class="org.g.action.TouziPojAction" method="lookqb">
+			<result name="lookqb">ykt.jsp</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+		<action name="ytfindByTitle" class="org.g.action.TouziPojAction" method="yfindByTitle">
+			<result name="yfindByTitle">findTAllPoj.jsp</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+		<action name="y_ytfindByTitle" class="org.g.action.TouziPojAction" method="yfindByTitle">
+			<result name="yfindByTitle">ykt.jsp</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+		<action name="touzipoj_test1" class="org.g.action.TouziPojAction" method="test1">
+			<result name="test1">ykt.jsp</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+		<action name="y_ytjubao" class="org.g.action.TouziPojAction" method="yjubao">
+			<result name="yjubao" type="chain">y_ytfindByTitle</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+		<action name="news_yfindAll" class="org.wl.action.NewsPojAction" method="yfindAll">
+			<result name="yfindAll">news_yfindAll.jsp</result>
+		</action>
+		<action name="news_yfindAllBy" class="org.wl.action.NewsPojAction" method="yfindAllBy">
+			<result name="yfindAllBy">news_yfindAll.jsp</result>
+			<result name="fail">fail.jsp</result>
+		</action>
+	</package>
+</struts>
